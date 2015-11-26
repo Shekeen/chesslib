@@ -18,6 +18,10 @@ public class Board {
 
     private ArrayList<Stone> board = new ArrayList<>(SQUARES);
 
+    static boolean isValidSqi(int sqi) {
+        return sqi >= 0 && sqi < SQUARES;
+    }
+
     static int sqiToCol(int sqi) {
         if (sqi < 0 || sqi >= SQUARES)
             return -1;
@@ -28,6 +32,22 @@ public class Board {
         if (sqi < 0 || sqi >= SQUARES)
             return -1;
         return sqi / WIDTH;
+    }
+
+    static int sqiRowDistance(int sqi1, int sqi2) {
+        int sqi1Row = sqiToRow(sqi1);
+        int sqi2Row = sqiToRow(sqi2);
+        if (sqi1Row == -1 || sqi2Row == -1)
+            return -1;
+        return Math.abs(sqi1Row - sqi2Row);
+    }
+
+    static int sqiColDistance(int sqi1, int sqi2) {
+        int sqi1Col = sqiToCol(sqi1);
+        int sqi2Col = sqiToCol(sqi2);
+        if (sqi1Col == -1 || sqi2Col == -1)
+            return -1;
+        return Math.abs(sqi1Col - sqi2Col);
     }
 
     static int coordsToSqi(int col, int row) {

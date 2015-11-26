@@ -10,7 +10,7 @@ public class Bishop implements Piece {
 
     @Override
     public boolean isValidCaptureMove(int sqiFrom, int sqiTo) {
-        return false;
+        return isValidMove(sqiFrom, sqiTo);
     }
 
     @Override
