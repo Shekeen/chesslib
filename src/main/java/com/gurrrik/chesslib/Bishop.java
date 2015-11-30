@@ -1,11 +1,15 @@
 package com.gurrrik.chesslib;
 
+import com.gurrrik.chesslib.util.IntegerRange;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Bishop implements Piece {
     @Override
     public boolean isValidMove(int sqiFrom, int sqiTo) {
-        return false;
+        return sqiFrom != sqiTo &&
+                Board.sqiRowDistance(sqiFrom, sqiTo) == Board.sqiColDistance(sqiFrom, sqiTo);
     }
 
     @Override
@@ -15,6 +19,25 @@ public class Bishop implements Piece {
 
     @Override
     public List<Integer> getTransitionalSquaresForMove(int sqiFrom, int sqiTo) {
-        return null;
+        if (isValidMove(sqiFrom, sqiTo)) {
+            List<Integer> result = new ArrayList<>();
+            int rowSign = Board.sqiToCol(sqiTo) - Board.sqiToCol(sqiFrom) > 0 ? 1 : -1;
+            int colSign = Board.sqiToRow(sqiTo) - Board.sqiToRow(sqiFrom) > 0 ? 1 : -1;
+            switch (rowSign * colSign) {
+                case 1:
+                    for (int x: IntegerRange.interval(sqiFrom, sqiTo, 9))
+                        result.add(x);
+                    break;
+                case -1:
+                    for (int x: IntegerRange.interval(sqiFrom, sqiTo, 7))
+                        result.add(x);
+                    break;
+                default:
+                    return null;
+            }
+            return result;
+        } else {
+            return null;
+        }
     }
 }

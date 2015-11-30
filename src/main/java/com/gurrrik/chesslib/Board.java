@@ -1,5 +1,7 @@
 package com.gurrrik.chesslib;
 
+import com.gurrrik.chesslib.util.IntegerRange;
+
 import java.util.ArrayList;
 
 public class Board {
@@ -17,6 +19,11 @@ public class Board {
                             A8=56,B8=57,C8=58,D8=59,E8=60,F8=61,G8=62,H8=63;
 
     private ArrayList<Stone> board = new ArrayList<>(SQUARES);
+
+    public Board() {
+        for (int x: IntegerRange.halfInterval(0, SQUARES))
+            board.add(null);
+    }
 
     static boolean isValidSqi(int sqi) {
         return sqi >= 0 && sqi < SQUARES;
