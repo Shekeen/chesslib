@@ -48,4 +48,9 @@ public class Rook implements Piece {
     public List<Integer> getTransitionalSquaresForMove(int sqiFrom, int sqiTo) {
         return RookMoveChecker.getTransitionalSquaresForMove(sqiFrom, sqiTo);
     }
+
+    @Override
+    public char getSANSymbol() {
+        return 'r';
+    }
 }

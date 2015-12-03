@@ -22,4 +22,9 @@ public class Knight implements Piece {
             return null;
         }
     }
+
+    @Override
+    public char getSANSymbol() {
+        return 'n';
+    }
 }

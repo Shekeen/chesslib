@@ -8,11 +8,15 @@ import static org.junit.Assert.*;
 public class StoneTest {
     private Stone whitePawn;
     private Stone blackPawn;
+    private Stone whiteQueen;
+    private Stone blackKnight;
 
     @Before
     public void setUp() throws Exception {
         whitePawn = new Stone(Color.WHITE, new Pawn());
         blackPawn = new Stone(Color.BLACK, new Pawn());
+        whiteQueen = new Stone(Color.WHITE, new Queen());
+        blackKnight = new Stone(Color.BLACK, new Knight());
     }
 
     @Test
@@ -39,5 +43,13 @@ public class StoneTest {
         assertTrue(blackPawn.isValidCaptureMove(Board.E5, Board.F4));
         assertFalse(whitePawn.isValidCaptureMove(Board.E5, Board.D4));
         assertFalse(blackPawn.isValidCaptureMove(Board.E4, Board.F5));
+    }
+
+    @Test
+    public void testGetSANSymbol() throws Exception {
+        assertEquals('P', whitePawn.getSANSymbol());
+        assertEquals('p', blackPawn.getSANSymbol());
+        assertEquals('Q', whiteQueen.getSANSymbol());
+        assertEquals('n', blackKnight.getSANSymbol());
     }
 }

@@ -149,4 +149,14 @@ public class BoardTest {
         board.removeStone(7, 4);
         assertNull(board.getStone(7, 4));
     }
+
+    @Test
+    public void testToFENString() throws Exception {
+        assertEquals("8/8/8/8/8/8/8/8", board.toFENString());
+
+        board.setStone(0, 0, new Stone(Color.WHITE, new Pawn()));
+        board.setStone(7, 7, new Stone(Color.BLACK, new Pawn()));
+        board.setStone(4, 3, new Stone(Color.WHITE, new Rook()));
+        assertEquals("7p/8/8/8/4R3/8/8/P7", board.toFENString());
+    }
 }

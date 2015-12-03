@@ -23,4 +23,9 @@ public class Queen implements Piece {
         else
             return null;
     }
+
+    @Override
+    public char getSANSymbol() {
+        return 'q';
+    }
 }

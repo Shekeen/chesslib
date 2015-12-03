@@ -54,4 +54,9 @@ public class Bishop implements Piece {
     public List<Integer> getTransitionalSquaresForMove(int sqiFrom, int sqiTo) {
         return BishopMoveChecker.getTransitionalSquaresForMove(sqiFrom, sqiTo);
     }
+
+    @Override
+    public char getSANSymbol() {
+        return 'b';
+    }
 }

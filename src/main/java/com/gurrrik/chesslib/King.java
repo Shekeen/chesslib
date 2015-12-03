@@ -24,4 +24,9 @@ public class King implements Piece {
             return null;
         }
     }
+
+    @Override
+    public char getSANSymbol() {
+        return 'k';
+    }
 }

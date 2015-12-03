@@ -106,4 +106,32 @@ public class Board {
     public boolean moveStone(int colFrom, int rowFrom, int colTo, int rowTo) {
         return moveStone(coordsToSqi(colFrom, rowFrom), coordsToSqi(colTo, rowTo));
     }
+
+    public String toFENString() {
+        StringBuilder sb = new StringBuilder();
+        for (int row = HEIGHT - 1; row >= 0; row--) {
+            int acc = 0;
+            for (int col = 0; col < WIDTH; col++) {
+                if (isSquareEmpty(col, row)) {
+                    acc++;
+                } else {
+                    if (acc > 0) {
+                        sb.append(acc);
+                        acc = 0;
+                    }
+                    sb.append(getStone(col, row).getSANSymbol());
+                }
+            }
+            if (acc > 0)
+                sb.append(acc);
+            if (row != 0)
+                sb.append('/');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return toFENString();
+    }
 }

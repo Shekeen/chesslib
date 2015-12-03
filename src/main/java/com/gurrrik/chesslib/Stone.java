@@ -70,4 +70,12 @@ public class Stone {
 
         return piece.getTransitionalSquaresForMove(sqiFrom, sqiTo);
     }
+
+    public char getSANSymbol() {
+        char c = piece.getSANSymbol();
+        if (color == Color.WHITE)
+            return Character.toUpperCase(c);
+        else
+            return Character.toLowerCase(c);
+    }
 }
