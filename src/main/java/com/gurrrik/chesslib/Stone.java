@@ -27,11 +27,16 @@ public class Stone {
 
         boolean validMove = piece.isValidMove(sqiFrom, sqiTo);
         if (isPawn) {
+            boolean correctStartSqi = true;
             switch (color) {
                 case WHITE:
-                    return sqiTo > sqiFrom && validMove;
+                    if (Board.sqiRowDistance(sqiFrom, sqiTo) == 2)
+                        correctStartSqi = Board.sqiToRow(sqiFrom) == 1;
+                    return sqiTo > sqiFrom && validMove && correctStartSqi;
                 case BLACK:
-                    return sqiTo < sqiFrom && validMove;
+                    if (Board.sqiRowDistance(sqiFrom, sqiTo) == 2)
+                        correctStartSqi = Board.sqiToRow(sqiFrom) == 6;
+                    return sqiTo < sqiFrom && validMove && correctStartSqi;
                 default:
                     return false;
             }
