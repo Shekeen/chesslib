@@ -15,7 +15,10 @@ class IntegerRangeIterator implements Iterator<Integer> {
 
     @Override
     public boolean hasNext() {
-        return start <= stop;
+        if (step > 0)
+            return start <= stop;
+        else
+            return step < 0 && start >= stop;
     }
 
     @Override
@@ -34,7 +37,7 @@ public class IntegerRange implements Iterable<Integer> {
     private IntegerRange(int start, int stop, int step) {
         this.start = start;
         this.stop = stop;
-        this.step = start < stop ? Math.abs(step) : -Math.abs(step);
+        this.step = step;
     }
 
     @Override
@@ -49,9 +52,9 @@ public class IntegerRange implements Iterable<Integer> {
     public static IntegerRange interval(int start, int stop, int step) {
         int absStep = Math.abs(step);
         if (start <= stop)
-            return new IntegerRange(start + absStep, stop - absStep, step);
+            return new IntegerRange(start + absStep, stop - 1, absStep);
         else
-            return new IntegerRange(start - absStep, stop + absStep, step);
+            return new IntegerRange(start - absStep, stop + 1, -absStep);
     }
 
     public static IntegerRange halfInterval(int start, int stop) {
@@ -61,9 +64,9 @@ public class IntegerRange implements Iterable<Integer> {
     public static IntegerRange halfInterval(int start, int stop, int step) {
         int absStep = Math.abs(step);
         if (start <= stop)
-            return new IntegerRange(start, stop - absStep, step);
+            return new IntegerRange(start, stop - 1, absStep);
         else
-            return new IntegerRange(start, stop + absStep, step);
+            return new IntegerRange(start, stop + 1, -absStep);
     }
 
     public static IntegerRange range(int start, int stop) {
@@ -71,6 +74,10 @@ public class IntegerRange implements Iterable<Integer> {
     }
 
     public static IntegerRange range(int start, int stop, int step) {
-        return new IntegerRange(start, stop, step);
+        int absStep = Math.abs(step);
+        if (start <= stop)
+            return new IntegerRange(start, stop, absStep);
+        else
+            return new IntegerRange(start, stop, -absStep);
     }
 }
