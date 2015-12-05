@@ -55,6 +55,21 @@ public class BoardTest {
     }
 
     @Test
+    public void testSqiToName() throws Exception {
+        assertEquals("c4", Board.sqiToName(Board.C4));
+        assertEquals("h8", Board.sqiToName(Board.H8));
+        assertNull(Board.sqiToName(-1));
+        assertNull(Board.sqiToName(Board.SQUARES));
+    }
+
+    @Test
+    public void testNameToSqi() throws Exception {
+        assertEquals(Board.E3, Board.nameToSqi("e3"));
+        assertEquals(Board.D7, Board.nameToSqi("d7"));
+        assertEquals(-1, Board.nameToSqi(""));
+    }
+
+    @Test
     public void testIsSquareEmpty() throws Exception {
         assertTrue(board.isSquareEmpty(Board.A4));
         assertTrue(board.isSquareEmpty(Board.E6));

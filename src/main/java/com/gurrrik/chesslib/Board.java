@@ -18,6 +18,16 @@ public class Board {
                             A7=48,B7=49,C7=50,D7=51,E7=52,F7=53,G7=54,H7=55,
                             A8=56,B8=57,C8=58,D8=59,E8=60,F8=61,G8=62,H8=63;
 
+    public static final String[] SQUARE_NAMES =
+            {"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
+             "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
+             "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
+             "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
+             "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
+             "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
+             "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
+             "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"};
+
     private ArrayList<Stone> board = new ArrayList<>(SQUARES);
 
     public Board() {
@@ -25,23 +35,23 @@ public class Board {
             board.add(null);
     }
 
-    static boolean isValidSqi(int sqi) {
+    public static boolean isValidSqi(int sqi) {
         return sqi >= 0 && sqi < SQUARES;
     }
 
-    static int sqiToCol(int sqi) {
+    public static int sqiToCol(int sqi) {
         if (sqi < 0 || sqi >= SQUARES)
             return -1;
         return sqi % WIDTH;
     }
 
-    static int sqiToRow(int sqi) {
+    public static int sqiToRow(int sqi) {
         if (sqi < 0 || sqi >= SQUARES)
             return -1;
         return sqi / WIDTH;
     }
 
-    static int sqiRowDistance(int sqi1, int sqi2) {
+    public static int sqiRowDistance(int sqi1, int sqi2) {
         int sqi1Row = sqiToRow(sqi1);
         int sqi2Row = sqiToRow(sqi2);
         if (sqi1Row == -1 || sqi2Row == -1)
@@ -49,7 +59,7 @@ public class Board {
         return Math.abs(sqi1Row - sqi2Row);
     }
 
-    static int sqiColDistance(int sqi1, int sqi2) {
+    public static int sqiColDistance(int sqi1, int sqi2) {
         int sqi1Col = sqiToCol(sqi1);
         int sqi2Col = sqiToCol(sqi2);
         if (sqi1Col == -1 || sqi2Col == -1)
@@ -57,10 +67,26 @@ public class Board {
         return Math.abs(sqi1Col - sqi2Col);
     }
 
-    static int coordsToSqi(int col, int row) {
+    public static int coordsToSqi(int col, int row) {
         if (col < 0 || col >= WIDTH || row < 0 || row >= HEIGHT)
             return -1;
         return row * WIDTH + col;
+    }
+
+    public static String sqiToName(int sqi) {
+        if (!isValidSqi(sqi))
+            return null;
+        return SQUARE_NAMES[sqi];
+    }
+
+    public static int nameToSqi(String name) {
+        if (name.length() != 2)
+            return -1;
+        char col = name.charAt(0);
+        char row = name.charAt(1);
+        if (col < 'a' || col > 'h' || row < '1' || row > '8')
+            return -1;
+        return coordsToSqi(col - 'a', row - '1');
     }
 
     public boolean isSquareEmpty(int sqi) {
