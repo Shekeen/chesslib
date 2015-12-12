@@ -133,6 +133,22 @@ public class Board {
         return moveStone(coordsToSqi(colFrom, rowFrom), coordsToSqi(colTo, rowTo));
     }
 
+    public static Board fromFENString(String fen) {
+        Board board = new Board();
+        int sqi = Board.A8;
+        for (char c: fen.toCharArray()) {
+            if (c == '/') {
+                sqi -= 16;
+            } else if (c >= '1' && c <= '8') {
+                sqi += (c - '0');
+            } else {
+                board.setStone(sqi, Stone.fromSANSymbol(c));
+                sqi++;
+            }
+        }
+        return board;
+    }
+
     public String toFENString() {
         StringBuilder sb = new StringBuilder();
         for (int row = HEIGHT - 1; row >= 0; row--) {

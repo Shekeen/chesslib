@@ -30,8 +30,27 @@ public class Game {
         fullMoveClock = 1;
     }
 
+    public Game(Board board, Color playerToMove,
+                boolean whiteCanKingCastle, boolean whiteCanQueenCastle,
+                boolean blackCanKingCastle, boolean blackCanQueenCastle,
+                int enPassantSqi, int halfMoveClock, int fullMoveClock) {
+        this.board = board;
+        this.playerToMove = playerToMove;
+        this.whiteCanKingCastle = whiteCanKingCastle;
+        this.whiteCanQueenCastle = whiteCanQueenCastle;
+        this.blackCanKingCastle = blackCanKingCastle;
+        this.blackCanQueenCastle = blackCanQueenCastle;
+        this.enPassantSqi = enPassantSqi;
+        this.halfMoveClock = halfMoveClock;
+        this.fullMoveClock = fullMoveClock;
+    }
+
     public Color getPlayerToMove() {
         return playerToMove;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 
     public boolean isWhiteCanKingCastle() {
@@ -277,6 +296,44 @@ public class Game {
             return true;
         }
         return false;
+    }
+
+    public static String STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -1 0 0";
+
+    public static Game fromFENString(String fen) {
+        String[] fields = fen.split("\\s+");
+
+        assert fields.length == 6;
+
+        assert fields[1].length() == 1;
+        char playerToMoveChar = fields[1].charAt(0);
+        assert playerToMoveChar == 'w' || playerToMoveChar == 'b';
+
+        boolean whiteCanKingCastle = false;
+        boolean whiteCanQueenCastle = false;
+        boolean blackCanKingCastle = false;
+        boolean blackCanQueenCastle = false;
+        assert fields[2].length() < 5;
+        if (fields[2].charAt(0) != '-') {
+            whiteCanKingCastle = fields[2].contains("K");
+            whiteCanQueenCastle = fields[2].contains("Q");
+            blackCanKingCastle = fields[2].contains("k");
+            blackCanQueenCastle = fields[2].contains("q");
+        }
+
+        int enPassantSqi = -1;
+        if (fields[3].charAt(0) != '-') {
+            enPassantSqi = Board.nameToSqi(fields[3]);
+        }
+
+        int halfMoveClock = Integer.parseInt(fields[4]);
+        int fullMoveClock = Integer.parseInt(fields[5]);
+
+        return new Game(Board.fromFENString(fields[0]),
+                playerToMoveChar == 'w' ? Color.WHITE : Color.BLACK,
+                whiteCanKingCastle, whiteCanQueenCastle,
+                blackCanKingCastle, blackCanQueenCastle,
+                enPassantSqi, halfMoveClock, fullMoveClock);
     }
 
     public String toFENString() {

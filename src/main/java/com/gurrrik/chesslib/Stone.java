@@ -71,6 +71,25 @@ public class Stone {
         return piece.getTransitionalSquaresForMove(sqiFrom, sqiTo);
     }
 
+    public static Stone fromSANSymbol(char san) {
+        Color color = Character.isLowerCase(san) ? Color.BLACK : Color.WHITE;
+        switch (Character.toLowerCase(san)) {
+            case 'p':
+                return new Stone(color, new Pawn());
+            case 'r':
+                return new Stone(color, new Rook());
+            case 'n':
+                return new Stone(color, new Knight());
+            case 'b':
+                return new Stone(color, new Bishop());
+            case 'q':
+                return new Stone(color, new Queen());
+            case 'k':
+                return new Stone(color, new King());
+        }
+        return null;
+    }
+
     public char getSANSymbol() {
         char c = piece.getSANSymbol();
         if (color == Color.WHITE)

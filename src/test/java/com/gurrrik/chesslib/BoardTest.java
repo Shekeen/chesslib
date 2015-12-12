@@ -174,4 +174,16 @@ public class BoardTest {
         board.setStone(4, 3, new Stone(Color.WHITE, new Rook()));
         assertEquals("7p/8/8/8/4R3/8/8/P7", board.toFENString());
     }
+
+    @Test
+    public void testFromFENString() throws Exception {
+        Board board = Board.fromFENString("7p/8/8/8/4R3/8/8/P7");
+        assertNull(board.getStone(1, 1));
+        assertEquals(Color.WHITE, board.getStone(0, 0).getColor());
+        assertTrue(board.getStone(0, 0).getPiece() instanceof Pawn);
+        assertEquals(Color.WHITE, board.getStone(4, 3).getColor());
+        assertTrue(board.getStone(4, 3).getPiece() instanceof Rook);
+        assertEquals(Color.BLACK, board.getStone(7, 7).getColor());
+        assertTrue(board.getStone(7, 7).getPiece() instanceof Pawn);
+    }
 }
