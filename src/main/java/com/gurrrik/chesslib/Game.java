@@ -1,5 +1,8 @@
 package com.gurrrik.chesslib;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Game {
     private Board board;
 
@@ -16,7 +19,6 @@ public class Game {
     private int fullMoveClock;
 
     public Game() {
-
         board = new Board();
         playerToMove = Color.WHITE;
         whiteCanKingCastle = true;
@@ -70,10 +72,9 @@ public class Game {
     }
 
     public boolean tryMove(int sqiFrom, int sqiTo) {
-        // check if a move is a castle, if it is, make the move
+        // first try to make a special move (castle, en passant)
         if (tryCastleMove(sqiFrom, sqiTo))
             return true;
-        // check if a move is en passant, if it is, make the move
         else if (tryEnPassantMove(sqiFrom, sqiTo))
             return true;
 
@@ -96,11 +97,167 @@ public class Game {
         if (stoneTo == null && !stoneFrom.isValidMove(sqiFrom, sqiTo))
             return false;
 
-        return false;
+        for (int sqi: stoneFrom.getTransitionalSquaresForMove(sqiFrom, sqiTo))
+            if (board.getStone(sqi) != null)
+                return false;
+
+        board.moveStone(sqiFrom, sqiTo);
+        //TODO: promote pawn if necessary
+
+        if (stoneFrom.getPiece() instanceof Pawn &&
+                Board.sqiRowDistance(sqiFrom, sqiTo) == 2) {
+            enPassantSqi = (sqiFrom + sqiTo) / 2;
+        } else {
+            enPassantSqi = -1;
+        }
+
+        if (stoneFrom.getPiece() instanceof King) {
+            switch (stoneFrom.getColor()) {
+                case WHITE:
+                    whiteCanKingCastle = false;
+                    whiteCanQueenCastle = false;
+                    break;
+                case BLACK:
+                    blackCanKingCastle = false;
+                    blackCanQueenCastle = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (stoneFrom.getPiece() instanceof Rook) {
+            if (stoneFrom.getColor() == Color.WHITE) {
+                if (sqiFrom == Board.A1)
+                    whiteCanQueenCastle = false;
+                else if (sqiFrom == Board.H1)
+                    whiteCanKingCastle = false;
+            } else {
+                if (sqiFrom == Board.A8)
+                    blackCanQueenCastle = false;
+                else if (sqiFrom == Board.H8)
+                    blackCanKingCastle = false;
+            }
+        }
+
+        playerToMove = getOtherPlayer(playerToMove);
+
+        if (stoneFrom.getPiece() instanceof Pawn ||
+                stoneTo != null)
+            halfMoveClock = 0;
+        else
+            halfMoveClock++;
+
+        if (playerToMove == Color.WHITE)
+            fullMoveClock++;
+
+        //TODO: check half move clock for 50 move rule
+        return true;
     }
 
     private boolean tryCastleMove(int sqiFrom, int sqiTo) {
+        Stone stoneFrom = board.getStone(sqiFrom);
+        if (stoneFrom == null)
+            return false;
+        boolean isKing = stoneFrom.getPiece() instanceof King;
+        if (isKing) {
+            switch (stoneFrom.getColor()) {
+                case WHITE:
+                    if (sqiFrom == Board.E1 && sqiTo == Board.G1)
+                        return tryWhiteKingSideCastleMove();
+                    else if (sqiFrom == Board.E1 && sqiTo == Board.C1)
+                        return tryWhiteQueenSideCastleMove();
+                    break;
+                case BLACK:
+                    if (sqiFrom == Board.E8 && sqiTo == Board.G8)
+                        return tryBlackKingSideCastleMove();
+                    else if (sqiFrom == Board.E8 && sqiTo == Board.C8)
+                        return tryBlackQueenSideCastleMove();
+                    break;
+                default:
+                    break;
+            }
+        }
         return false;
+    }
+
+    private boolean tryWhiteKingSideCastleMove() {
+        if (whiteCanKingCastle) {
+            List<Integer> intermediateSqis = new ArrayList<>();
+            intermediateSqis.add(Board.F1);
+            intermediateSqis.add(Board.G1);
+            return tryCastleMoveHelper(Board.E1, Board.G1, Board.H1, Board.F1,
+                    Color.WHITE, intermediateSqis);
+        }
+        return false;
+    }
+
+    private boolean tryWhiteQueenSideCastleMove() {
+        if (whiteCanQueenCastle) {
+            List<Integer> intermediateSqis = new ArrayList<>();
+            intermediateSqis.add(Board.B1);
+            intermediateSqis.add(Board.C1);
+            intermediateSqis.add(Board.D1);
+            return tryCastleMoveHelper(Board.E1, Board.C1, Board.A1, Board.D1,
+                    Color.WHITE, intermediateSqis);
+        }
+        return false;
+    }
+
+    private boolean tryBlackKingSideCastleMove() {
+        if (blackCanKingCastle) {
+            List<Integer> intermediateSqis = new ArrayList<>();
+            intermediateSqis.add(Board.F8);
+            intermediateSqis.add(Board.G8);
+            return tryCastleMoveHelper(Board.E8, Board.G8, Board.H8, Board.F8,
+                    Color.BLACK, intermediateSqis);
+        }
+        return false;
+    }
+
+    private boolean tryBlackQueenSideCastleMove() {
+        if (blackCanQueenCastle) {
+            List<Integer> intermediateSqis = new ArrayList<>();
+            intermediateSqis.add(Board.B8);
+            intermediateSqis.add(Board.C8);
+            intermediateSqis.add(Board.D8);
+            return tryCastleMoveHelper(Board.E8, Board.C8, Board.A8, Board.D8,
+                    Color.BLACK, intermediateSqis);
+        }
+        return false;
+    }
+
+    private boolean tryCastleMoveHelper(int sqiKingFrom, int sqiKingTo,
+                                        int sqiRookFrom, int sqiRookTo,
+                                        Color color, List<Integer> intermediateSqis) {
+        Stone king = board.getStone(sqiKingFrom);
+        Stone rook = board.getStone(sqiRookFrom);
+        assert king.getPiece() instanceof King && king.getColor() == color;
+        if (rook == null || !(rook.getPiece() instanceof Rook) || rook.getColor() != color)
+            return false;
+        for (int sqi: intermediateSqis)
+            if (board.getStone(sqi) != null)
+                return false;
+        // TODO: also check if squares are under attack
+        board.moveStone(sqiKingFrom, sqiKingTo);
+        board.moveStone(sqiRookFrom, sqiRookTo);
+        enPassantSqi = -1;
+        playerToMove = getOtherPlayer(playerToMove);
+        halfMoveClock++;
+        if (playerToMove == Color.WHITE)
+            fullMoveClock++;
+        switch (color) {
+            case WHITE:
+                whiteCanKingCastle = false;
+                whiteCanQueenCastle = false;
+                break;
+            case BLACK:
+                blackCanKingCastle = false;
+                blackCanQueenCastle = false;
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     private boolean tryEnPassantMove(int sqiFrom, int sqiTo) {
@@ -117,6 +274,7 @@ public class Game {
             halfMoveClock = 0;
             if (playerToMove == Color.WHITE)
                 fullMoveClock++;
+            return true;
         }
         return false;
     }
